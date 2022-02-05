@@ -1,40 +1,61 @@
+import { DEFAULT_EXTENSIONS } from '@babel/core'
 import babel from '@rollup/plugin-babel'
-import resolve from '@rollup/plugin-node-resolve'
+import typescript from 'rollup-plugin-typescript2'
+import commonjs from '@rollup/plugin-commonjs'
 import external from 'rollup-plugin-peer-deps-external'
-import css from 'rollup-plugin-import-css'
-import image from '@rollup/plugin-image'
-import commonjs from 'rollup-plugin-commonjs'
+import postcss from 'rollup-plugin-postcss'
+import resolve from '@rollup/plugin-node-resolve'
+import url from '@rollup/plugin-url'
+import svgr from '@svgr/rollup'
 import { terser } from 'rollup-plugin-terser'
+import typescriptEngine from 'typescript'
+import pkg from './package.json'
+const config = {
+  input: 'src/index.js',
+  output: [
+    {
+      file: pkg.main,
+      format: 'cjs',
+      exports: 'named',
+    },
+    {
+      file: pkg.module,
+      format: 'es',
+      exports: 'named',
+    },
+  ],
+  plugins: [
+    postcss({
+      plugins: [],
+      minimize: true,
+    }),
+    external({
+      includeDependencies: true,
+    }),
+    typescript({
+      typescript: typescriptEngine,
+      include: ['*.js+(|x)', '**/*.js+(|x)'],
+      exclude: [
+        'coverage',
+        'config',
+        'dist',
+        'node_modules/**',
+        '*.test.{js+(|x), ts+(|x)}',
+        '**/*.test.{js+(|x), ts+(|x)}',
+      ],
+    }),
 
-export default [
-  {
-    input: './src/index.js',
-    output: [
-      {
-        file: 'dist/index.js',
-        format: 'cjs',
-      },
-      {
-        file: 'dist/index.es.js',
-        format: 'es',
-        exports: 'named',
-      },
-    ],
-    plugins: [
-      commonjs({
-        include: 'node_modules/**',
-      }),
-      image({
-        dom: true,
-      }),
-      css(),
-      babel({
-        exclude: 'node_modules/**',
-        presets: ['@babel/preset-react'],
-      }),
-      external(),
-      resolve(),
-      terser(),
-    ],
-  },
-]
+    babel({
+      extensions: [...DEFAULT_EXTENSIONS, '.ts', 'tsx'],
+      babelHelpers: 'runtime',
+      exclude: /node_modules/,
+    }),
+    commonjs(),
+    url(),
+    svgr(),
+    resolve(),
+    terser(),
+  ],
+}
+
+export default config

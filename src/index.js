@@ -9,7 +9,7 @@ export const DfkHeroCard = ({ apiHero, isAnimated, isFlipped }) => {
   )
 }
 
-export const DfkHeroSprite = ({}) => {
+export const DfkHeroSprite = () => {
   return <HeroSprite noCard={true} />
 }
 
