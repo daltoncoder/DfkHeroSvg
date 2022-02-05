@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "react component for generating NFTs from DefiKingdoms",
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-lib": "rollup -c"
